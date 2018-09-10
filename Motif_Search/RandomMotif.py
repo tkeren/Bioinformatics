@@ -143,4 +143,4 @@ def getDnaFromFile(path):
 
 
 
-Drive(getDnaFromFile('D:\Projects\Bioinformatics\Motif_Search\Data\Randomized.txt'), 20)
+Drive(getDnaFromFile('D:\Projects\Bioinformatics\Motif_Search\Data/rand2.txt'), 20)

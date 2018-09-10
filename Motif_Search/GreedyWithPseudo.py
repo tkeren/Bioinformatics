@@ -68,10 +68,10 @@ def makeProfile(DNA):
             print("ERR. length of k-mers doesnt match. " + str(l) + ' != ' + str(len(i)))
     profile = [[],[],[],[]]
     for i in range(0,l):
-        A = 0
-        C = 0
-        G = 0
-        T = 0
+        A = 1
+        C = 1
+        G = 1
+        T = 1
         for strand in DNA:
             if strand[i] == 'A':
                 A +=1
@@ -116,4 +116,4 @@ def getDnaFromFile(path):
 
 
 
-greedyDrive(getDnaFromFile('D:\Projects\Bioinformatics\Motif_Search\Data\Greedy2.txt'), 3, 5)
+greedyDrive(getDnaFromFile('D:\Projects\Bioinformatics\Motif_Search\Data\Greedy3.txt'), 12, 25)
