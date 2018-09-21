@@ -1,0 +1,146 @@
+import numpy as np
+import random
+import scipy
+from scipy.spatial import distance
+
+def import_data(path, itr):
+    f = open(path, 'r')
+    lines = f.readlines()
+    f.close()
+    k = -1
+    m = -1
+    k_rangeUpper = []
+    k_rangeLower = []
+    points = []
+    i = 0
+    for line in lines:
+        l = line.split()
+        l = [float(f) for f in l]
+        if i == 0:
+            k = int(l[0])
+            m = int(l[1])
+        else:
+            if i == 1:
+                k_rangeLower = l.copy()
+                k_rangeUpper = l.copy()
+            else:
+                for p in range(m):
+                    if l[p]>k_rangeUpper[p]:
+                        k_rangeUpper[p] = l[p]
+                    if l[p]<k_rangeLower[p]:
+                        k_rangeLower[p] = l[p]
+            points.append(l)
+        i += 1
+    print(k_rangeLower)
+    print(k_rangeUpper)
+    center, variation = driver(points, k_rangeUpper, k_rangeLower, k, m)
+
+    for v in range(0, itr):
+        c, var = driver(points, k_rangeUpper, k_rangeLower, k, m)
+
+        print(v)
+        if var<variation:
+            display(c)
+            print("variation: " + str(var))
+            center=c.copy()
+            variation=var
+    print('-------------------')
+    display(center)
+
+
+
+
+
+
+def driver(points, k_rangeUpper, k_rangeLower, k, m):
+    #creating points
+    centers = []
+    spread = 0
+    '''for ind in range(0,100):
+        bestcenters = []
+        for i in range(0 ,k):
+            center = []
+            for j in range(0, m):
+                u = k_rangeUpper[j]
+                l = k_rangeLower[j]
+                center.append(random.uniform(l,u))
+            bestcenters.append(center)
+        temp = 0
+        for point1 in bestcenters:
+            for point2 in bestcenters:
+                temp += distance.euclidean(point1, point2)
+
+            if temp>spread:
+                centers = bestcenters.copy()
+                spread = temp'''
+    for i in range(0, k):
+        center = []
+        for j in range(0, m):
+            u = k_rangeUpper[j]
+            l = k_rangeLower[j]
+            center.append(random.uniform(l, u))
+        centers.append(center)
+
+    centers, variation = find_clusters(points, centers)
+    return (centers, variation)
+
+def find_clusters(points, centers):
+    diff = True
+    variations = 0
+    while diff:
+        variations = 0
+        assignee = [[] for i in range(len(centers))]
+        for point in points:
+            dist = []
+            for center in centers:
+                dist.append(scipy.spatial.distance.euclidean(point, center))
+            min = np.argmin(dist)
+            assignee[min].append(point)
+            variations += dist[min]
+
+
+        diff = False
+        i = 0
+        for p in assignee:
+            if len(p) == 0:
+                continue
+            newCenter = find_center(p)
+            if newCenter != centers[i]:
+                diff = True
+                centers[i] = newCenter.copy()
+            i+=1
+    return (centers , variations)
+
+
+
+def find_center(points):
+    #print(points)
+    m = len(points[0])
+    dimensions = [[]for i in range(m)]
+    for i in range(m):
+        for point in points:
+            dimensions[i].append(point[i])
+
+    center = []
+    for d in dimensions:
+        center.append(np.mean(d))
+    return (center)
+
+def display(points):
+    for point in points:
+        s = ""
+        for i in range(len(point)):
+            x = round(point[i], 3)
+            #x = point[i]
+            x = str(x)
+            for j in range(len(x),5):
+                x = x+'0'
+            if i ==0:
+                s += x
+            else:
+                s = s + " "+ x
+        print(s)
+
+
+
+import_data('D:\Projects\Bioinformatics\K-means\Data/d7.txt', 70)

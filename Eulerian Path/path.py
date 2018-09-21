@@ -156,7 +156,7 @@ g.addEdges(2, 3)
 g.addEdges(3, 4)
 g.addEdges(4, 1)'''
 
-g = formGraph('D:\Projects\Bioinformatics\Eulerian Path\Data/test.txt')
+g = formGraph('D:\Projects\Bioinformatics\Eulerian Path\Data/cycle.txt')
 g.driver()
 
 

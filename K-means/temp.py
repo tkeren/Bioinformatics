@@ -2,67 +2,86 @@ import numpy as np
 import random
 import scipy
 from scipy.spatial import distance
-import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
+import turtle
 
-#takes path of data.txt file and returns a vector of points as well as K
-def import_data(path):
+#takes path of data.txt file and number of iterations and displays the iteration containing the minimum variation
+def import_data(path, itr):
     f = open(path, 'r')
     lines = f.readlines()
     f.close()
     k = -1
     m = -1
+    #dimensions limits
+    k_rangeUpper = []
+    k_rangeLower = []
+    #all points
     points = []
-    #extract data into points
-    for i, line in enumerate(lines):
+    i = 0
+    #extract data into points, set k and m
+    for line in lines:
         l = line.split()
         l = [float(f) for f in l]
         if i == 0:
             k = int(l[0])
             m = int(l[1])
         else:
+            if i == 1:
+                k_rangeLower = l.copy()
+                k_rangeUpper = l.copy()
+            else:
+                for p in range(m):
+                    if l[p]>k_rangeUpper[p]:
+                        k_rangeUpper[p] = l[p]
+                    if l[p]<k_rangeLower[p]:
+                        k_rangeLower[p] = l[p]
             points.append(l)
+        i += 1
 
-    return(points, k)
 
-
-#given the data set, k-value, and n number of iterations(deafult 6) ->
-#apply K-mean clustering n times saving the one with smallest variation
-#for finding optimal k -> returns center points, W, and B for CH index
-#else returns set of center points and k sets of points each set contains points of each cluster
-def driver(points, k, iterations=6, optimalK=False):
-    center, variation, assignee = Kmean(points, k)
+    center, variation = driver(points, k_rangeUpper, k_rangeLower, k, m)
+    display(center)
+    print("variation: " + str(variation))
     #repeat k-mean algorithm until end
-    for v in range(0, iterations):
-        c, var, assigneetemp = Kmean(points, k)
-        print('run #' + str(v))
+    for v in range(0, itr):
+        c, var = driver(points, k_rangeUpper, k_rangeLower, k, m)
+        print('-------------------')
+        display(c)
+        print("variation: " + str(var))
+
+        print('run number - ' + str(v))
 
         if var<variation:
             #display(c)
             center=c.copy()
             variation=var
-            assignee=assigneetemp.copy()
     print('-------------------')
-    if not optimalK:
-        return(center, assignee)
-    else:
-        B=0
-        for c in range(len(center)-1):
-            for c2 in range(c,len(center)):
-                B+=distance.euclidean(center[c], center[c2])
-        return (center, variation, B)
+    display(center)
 
 
 
 
 
+#takes the points, upper and lower limit for each dimansion, k, and m. returns fixed cluster centers and variation
+def driver(points, k_rangeUpper, k_rangeLower, k, m):
+    #creating random points
+    centers = [p for p in points[:k]]
+    #centers = []
+    '''for i in range(0, k):
+        center = []
+        for j in range(0, m):
+            u = k_rangeUpper[j]
+            l = k_rangeLower[j]
+            center.append(random.uniform(l, u))
+        centers.append(center)'''
 
+    #centers = random.sample(points, k)
+
+    #finding the clusters with their variations using starting point
+    centers, variation = find_clusters(points, centers)
+    return (centers, variation)
 
 #main body of algorithm. Takes all the points and returns the fixed center based on random start along with variation
-def Kmean(points, k):
-    # selecting K random points
-    centers = random.sample(points, k)
-    # finding the clusters with their variations using starting point
+def find_clusters(points, centers):
     diff = True #the centers are different that previous round
     variations = 0 #counter for variations
     while diff:
@@ -79,9 +98,9 @@ def Kmean(points, k):
             variations += dist[min]
 
         diff = False
-        plotcluster(points, k, assignee)
+        i = 0
         #reassign center based on points for each cluster
-        for i, p in enumerate(assignee):
+        for p in assignee:
             if len(p) == 0:
                 continue
             newCenter = find_center(p)
@@ -90,8 +109,8 @@ def Kmean(points, k):
             if newCenter != centers[i]:
                 diff = True
                 centers[i] = newCenter.copy()
-
-    return (centers , variations, assignee)
+            i+=1
+    return (centers , variations)
 
 
 #finds the mean for all points in a cluster for each dimension
@@ -123,41 +142,6 @@ def display(points):
         print(s)
 
 
-#Uses CH index to find optimal K
-#incomplete
-def optimalK(points, low, high):
-    centers = []
-    n = len(points)
-    CH = []
-    for i in range(low,high):
-        center, var, B = driver(points,i, optimalK=True)
-        CH.append((B/(i-1))/(var/(n-i)))
-        centers.append(center)
-    ks = [i for i in range(low,high)]
 
-    plt.plot(ks, CH)
-    plt.show()
+import_data('D:\Projects\Bioinformatics\K-means\Data/d6.txt', 1)
 
-#visualizations of the cluster (only 3d)
-def plotcluster(points, k, asignee):
-    #center, asignee = driver(points, k)
-    color = ['red', 'blue', 'green', 'yellow', 'black', 'pink']
-    fig = plt.figure()
-    ax = fig.add_subplot(111)#, projection='3d')
-    for i, point in enumerate(asignee):
-        a = []
-        b = []
-        c = []
-        for p in point:
-            a.append(p[0])
-            b.append(p[1])
-            #c.append(p[2])
-        ax.scatter(a, b, color=color[i])
-    plt.show()
-
-
-
-
-points, k = import_data('Data/ex.txt')
-#plotcluster(points, 6)
-driver(points, 2, iterations=1)
