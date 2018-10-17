@@ -1,3 +1,7 @@
+import plotly.plotly as py
+import plotly
+plotly.tools.set_credentials_file(username='Tkeren', api_key='e9czxwE0AQoOTx2rMtNL')
+import plotly.graph_objs as go
 import numpy as np
 import random
 import scipy
@@ -47,8 +51,8 @@ def driver(points, k, iterations=6, optimalK=False):
         return(center, assignee)
     else:
         B=0
-        for c in range(len(center)-1):
-            for c2 in range(c,len(center)):
+        for c in range(len(center)):
+            for c2 in range(len(center)):
                 B+=distance.euclidean(center[c], center[c2])
         return (center, variation, B)
 
@@ -79,7 +83,7 @@ def Kmean(points, k):
             variations += dist[min]
 
         diff = False
-        plotcluster(points, k, assignee)
+        #plotcluster(points, k, assignee)
         #reassign center based on points for each cluster
         for i, p in enumerate(assignee):
             if len(p) == 0:
@@ -131,7 +135,7 @@ def optimalK(points, low, high):
     CH = []
     for i in range(low,high):
         center, var, B = driver(points,i, optimalK=True)
-        CH.append((B/(i-1))/(var/(n-i)))
+        CH.append((var/(i-1))/(B/(n-i)))
         centers.append(center)
     ks = [i for i in range(low,high)]
 
@@ -139,8 +143,8 @@ def optimalK(points, low, high):
     plt.show()
 
 #visualizations of the cluster (only 3d)
-def plotcluster(points, k, asignee):
-    #center, asignee = driver(points, k)
+def plotcluster(points, k):#, asignee):
+    center, asignee = driver(points, k)
     color = ['red', 'blue', 'green', 'yellow', 'black', 'pink']
     fig = plt.figure()
     ax = fig.add_subplot(111)#, projection='3d')
@@ -156,8 +160,48 @@ def plotcluster(points, k, asignee):
     plt.show()
 
 
+def ThreeDplotting(points, k):
+    center, asignee = driver(points, k)
+    traces = []
+    color = ['red', 'blue', 'green', 'yellow', 'black', 'pink']
+    for i, point in enumerate(asignee):
+        a = []
+        b = []
+        c = []
+        for p in point:
+            a.append(p[0])
+            b.append(p[1])
+            c.append(p[2])
+        trace = go.Scatter3d(
+            x=a,
+            y=b,
+            z=c,
+            mode='markers',
+            marker=dict(
+                size=8,
+                color=color[i],  # set color to an array/list of desired values
+                colorscale='Viridis',  # choose a colorscale
+                opacity=0.8
+            )
+        )
+        traces.append(trace)
+    data = traces
+    layout = go.Layout(
+        margin=dict(
+            l=0,
+            r=0,
+            b=0,
+            t=0
+        )
+    )
+    fig = go.Figure(data=data, layout=layout)
+    py.iplot(fig, filename='3d-scatter-colorscale')
 
 
-points, k = import_data('Data/ex.txt')
+points, k = import_data('Data/d3.txt')
+optimalK(points,2,8)
 #plotcluster(points, 6)
-driver(points, 2, iterations=1)
+#driver(points, 2, iterations=0)
+#ThreeDplotting(points, k)
+
+

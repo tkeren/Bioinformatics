@@ -41,4 +41,4 @@ def driver(path):
 
 
 
-driver('D:\Projects\Bioinformatics\Limb_Length\Data/tree.txt')
+#driver('D:\Projects\Bioinformatics\Limb_Length\Data/tree.txt')

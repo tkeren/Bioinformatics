@@ -1,4 +1,4 @@
-from Limb_Length import *
+from Limb_Length import find_length
 def additivePhylogeny(D, n):
     if n == 2:
         return
