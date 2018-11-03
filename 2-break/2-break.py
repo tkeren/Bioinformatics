@@ -101,6 +101,11 @@ def breakOnGenome(p, i1, i2, i3, i4):
     return p
 
 def ShortestRearrangment(p, q):
+    print("from: ")
+    display(p)
+    print("to: ")
+    display(q)
+    print("________________________________")
     display(p)
     red = coloredEdges(p)
     blue = coloredEdges(q)
@@ -190,4 +195,4 @@ q = [[1,2,-4,-3]]
 #ShortestRearrangment(p,q)
 #breakLength(p,q)
 
-driver('D:\Projects\Bioinformatics/2-break\data/d1.txt')
+driver('D:\Projects\Bioinformatics/2-break\data/d5.txt')

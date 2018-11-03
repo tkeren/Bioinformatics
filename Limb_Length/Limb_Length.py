@@ -3,7 +3,10 @@ import numpy as np
 
 def find_length(matrix, i):
     m = len(matrix)
+    mini = 0
     minlimb = 10000
+    Tk = 0
+    Tj = 0
     for j in range(m):
         if j == i:
             continue
@@ -16,10 +19,12 @@ def find_length(matrix, i):
         limb = (matrix[i][k] + matrix[i][j] - matrix[j][k])/2
         if limb<minlimb:
             minlimb = limb
-    return minlimb
+            Tj =j
+            Tk = k
+    return (minlimb, Tj, Tk)
 
 
-def driver(path):
+def driverll(path):
     f = open(path, 'r')
     lines = f.readlines()
     f.close()
@@ -41,4 +46,4 @@ def driver(path):
 
 
 
-#driver('D:\Projects\Bioinformatics\Limb_Length\Data/tree.txt')
+#driverll('D:\Projects\Bioinformatics\Limb_Length\Data/APtest.txt')
