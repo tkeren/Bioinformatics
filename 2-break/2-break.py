@@ -190,9 +190,9 @@ def driver(path):
     ShortestRearrangment(p,q)
 
 
-p = [[1,-2,-3,4]]
-q = [[1,2,-4,-3]]
-#ShortestRearrangment(p,q)
+p = [[1,-5, -4, 2, 3, 7, 6, 8]]
+q = [[1,2,3,4, 5, 6, 7, 8]]
+ShortestRearrangment(p,q)
 #breakLength(p,q)
 
-driver('D:\Projects\Bioinformatics/2-break\data/d5.txt')
+#driver('D:\Projects\Bioinformatics/2-break\data/test2.txt')

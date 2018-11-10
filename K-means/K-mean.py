@@ -199,9 +199,9 @@ def ThreeDplotting(points, k):
 
 
 points, k = import_data('Data/d3.txt')
-optimalK(points,2,8)
-#plotcluster(points, 6)
-#driver(points, 2, iterations=0)
+#optimalK(points,2,8)
+plotcluster(points, 6)
+#driver(points, 2, iterations=4)
 #ThreeDplotting(points, k)
 
 
